@@ -35,6 +35,32 @@ This script is designed for windows, but can be tweaked for unix systems (change
 
 ### dedupeLoop
 
+This script was created with the purpose of comparing two fasta files together using the dedupe shell script. For this project, some genes had multiple "match_part" fasta queries/files (Queries would be labeled as "match_part1", "match_part2", "match_part3" etc.). These sequences look identical when viewed within a gene alignment program, so to determine if all match_part sequences were identical to their same gene counterpart, dedupe would be run on each match_part group and duplicated would be removed to thin the dataset. 
+
+This script worked based on the file structure for the latter chunk of this project, which looks as follows:
+
+>- BaseFolder
+>   - FirstGeneFolder
+>       - speciesOneFirstGene.fa
+>       - speciesTwoFirstGene.fa
+>   - SecondGeneFolder  
+>       - speciesOneSecondGene.fa
+>       - speciesTwoSecondGene.fa
+
+When utilizing the script, the "inputFolder" variable/directory should be set to the base directory as shown in the file system above. The "outputFolder" variable/directory can be set to wherever. The "dedupePath" variable should be set to wherever the user has "dedupe.sh" stored on their PC (this script can be acquired online through bbtools).
+
+The script will start at the baseFolder and pull fasta file names from each sub folder. The script will count the number of entries in the folders per species. The script assumes that if there is more than one than one entry per species within a folder, that multiple match_part entries are present. Otherwise, the script will ignore the subfolder and continue onto the next folder. Notably, the script operates off of files with the following naming scheme:
+
+>Aeorestes_cinereus.ACTR2_ENSG00000138071.15_ENST00000377982.8.fa
+
+The script will also assume each file has only one fasta header and sequence
+
+There are two sections of commented out code
+
+- The first (os.rename block) is meant for moving gene files that did not have to be dedupe'd over to the output folder
+- The second is for if one would like to see the shell output of running the dedupe.sh script
+
+
 ### geneSeparater
 
 ### humanGeneSeqGenerator

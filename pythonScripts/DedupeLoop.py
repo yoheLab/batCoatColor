@@ -1,10 +1,7 @@
-print("Hello world!")
-
 import subprocess
 import os
 
-
-# Gets files and filters out non-fasta files, also adds full file pathto each entry
+# Gets files and filters out non-fasta files, also adds full file path to each entry
 def getFiles(tempFolder):
     tempFolderPath =  inputFolder + "/" + folder
     tempFolderFiles = os.listdir(tempFolderPath)
@@ -14,13 +11,14 @@ def getFiles(tempFolder):
     return tempFolderFilePath
 
 
-# Takes a list of files and runs all files against eachother with dedupe
+# Takes a list of files and runs all files against each other with dedupe
 def dedupe(tempFileList, outFolder):
     outputPath = outputFolder + "/" + outFolder
-    formatedFiles = ""
+    formattedFiles = ""
 
     for f in tempFileList:
-        formatedFiles = formatedFiles + f.strip() + ","
+        formattedFiles = formattedFiles + f.strip() + ","
+    
     if not os.path.exists(outputPath):
         os.makedirs(outputPath)
 
@@ -29,21 +27,20 @@ def dedupe(tempFileList, outFolder):
     outName = outName.split("_part1")
     outName = str(outName[0] + outName[1])
     outputPath += "/" + outName
-
+    
     # os.rename(f, outputPath) use for non-deduped entries
 
-    result = subprocess.Popen(["bash",dedupePath,"in=" + formatedFiles[0:len(formatedFiles)-1], "out=" + outputPath])
-    out, err = result.communicate()
+    result = subprocess.Popen(["bash",dedupePath,"in=" + formattedFiles[0:len(formattedFiles)-1], "out=" + outputPath])
     
+    #out, err = result.communicate()
     #if result.returncode == 0:
-    #    print("YIPPIE!!!")
+    #    print("Dedupe worked!")
     #else:
     #    print("out : {0}".format(out))
     #    print("err : {0}".format(err))
 
 # Organizes list of files into species defined categories, returns dictionary
 def matchPartParse(tempFileList):
-    
     tempDict = {}
 
     for f in tempFileList:
@@ -52,12 +49,9 @@ def matchPartParse(tempFileList):
             speciesName = splitFile[1][splitFile[1].find("/") + 1:len(splitFile[1])]
         else:
             speciesName = splitFile[2][splitFile[2].find("/") + 1:len(splitFile[2])]
-            print(speciesName)
-
-
+        
         if speciesName in tempDict.keys():
             tempDict.update({speciesName:tempDict[speciesName] + [f]})
-        
         else:
             tempDict.update({speciesName:[f]})
     
@@ -65,7 +59,6 @@ def matchPartParse(tempFileList):
 
 
 # File paths
-#testScript = "/mnt/c/Users/Jacob/Desktop/bashTest.sh"
 dedupePath = "/mnt/c/Users/Jacob/Desktop/BBTools/BBMap_39.08/bbmap/dedupe.sh"
 inputFolder = "/mnt/c/Users/Jacob/Desktop/Wormhole/Yohe_Lab/IsolatedGenes"
 outputFolder = "/mnt/c/Users/Jacob/Desktop/Wormhole/Yohe_Lab/DedupeIsolatedGenes"
