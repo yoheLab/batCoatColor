@@ -1,57 +1,5 @@
 import os
 
-print("Hello World!")
-
-# Reads in a blast fasta output and converts it's blast headers
-def blastRenamerOld(fileName):
-    
-    # Gets species name from file name
-    speciesName = fileName[0:(fileName.find(".tb"))]
-
-    # Open input file
-    with open(fileName, "r") as fileContent:
-        
-        # Create output file name from input file name
-        outputName = fileName[0:fileName.find(".") + 1] + "newname." + fileName[fileName.find("tblastn."):len(fileName)]
-        
-        # Attatch output file name to output file path and open the file
-        outputFile = open(outPath + outputName, "w")
-
-        # Go through file line by line
-        for line in fileContent:
-            
-            # Begins/resets gene header with the species name
-            geneHeader = ">" + speciesName + "."
-            
-            # If the line is a header
-            if str(line)[0] == ">":
-                
-                # Isolates the ID and gene name
-                tempParse = str(line)[line.find("t=") + 2:len(line)]
-                almostGeneName = tempParse[tempParse.find(".") + 1:len(tempParse)]
-                
-                # For loop find the beginning of the gene name from the ID
-                for char in almostGeneName:
-                    if char.isnumeric() == False:
-                        coolChar = char
-                        break
-                
-                # Puts it all together
-                geneName = almostGeneName[almostGeneName.find(coolChar):len(almostGeneName)]
-                ensemblID = tempParse[0:tempParse.find(geneName)]
-                geneHeader += geneName.strip() + "|" + ensemblID
-
-                # Write final header to file
-                outputFile.write(geneHeader + "\n")
-
-            else:
-
-                # Write the sequence info underneath the file
-                outputFile.write(line + "\n")
-    
-    # Close output file
-    outputFile.close()
-
 # Reads in a blast fasta output and converts it's blast headers
 def blastRenamer(fileName):
     
@@ -66,15 +14,11 @@ def blastRenamer(fileName):
         # Create output file name from input file name
         outputName = isolatedFileName[0:isolatedFileName.find(".") + 1] + "newname." + isolatedFileName[isolatedFileName.find("tblastn."):len(isolatedFileName)]
         
-        # Attatch output file name to output file path and open the file
-        outputFile = open("G:\Other computers\My Computer\WormHole\Yohe_Lab\BlastResultsRenaming" + outputName, "w")
-        print(outPath + outputName)
-
+        # Attach output file name to output file path and open the file
+        outputFile = open(outPath + outputName, "w")
+        
         # Go through file line by line
         for line in fileContent:
-            
-            # Begins/resets gene header with the species name
-            geneHeader = ">" + speciesName + "."
             
             # If the line is a header
             if str(line)[0] == ">":
@@ -99,8 +43,6 @@ def blastRenamer(fileName):
                     else:
                         geneName = ">" + speciesName + "_" + secondParse[4] + "-" + secondParse[5][0] + "_" + secondParse[6] + "_" + secondParse[2][secondParse[2].find(".") + 1:len(secondParse[2])] + "_" + secondParse[3]
                 
-                #almostGeneName = tempParse[tempParse.find(".") + 1:len(tempParse)]
-
                 # Write final header to file
                 outputFile.write(geneName + "\n")
 
@@ -121,6 +63,7 @@ fileList = os.listdir(filePath)
 
 # Goes one file above the input directory for creating an output directory
 rootPath = filePath[0:filePath.rfind("\\")]
+
 
 # Filters out any non fasta files
 for f in fileList:
