@@ -61,7 +61,27 @@ There are two sections of commented out code
 - The second is for if one would like to see the shell output of running the dedupe.sh script
 
 
-### geneSeparater
+### geneSeparator
+
+This script will take all the fasta files in a directory, and split every blast query into individual files. The individual query files are then sorted into folders, identified by the gene name and transcript ID. If the gene does not have a common name, the gene ID will be used instead. For this project, this script was used following a large BLAST query, where tblastn results were converted into a fasta format and parsed to have altered headers. 
+
+The script works off of a root directory, with an input an output folder stemming off of it. The input directory should contain fasta files with multiple queries. The output directory be filled with folders corresponding to gene name and transcript ID as mentioned above. If the output directory was named "BaseFolder", the final file scheme will look like the example below.
+
+>- BaseFolder
+>   - FirstGeneFolder
+>       - speciesOneFirstGene.fa
+>       - speciesTwoFirstGene.fa
+>   - SecondGeneFolder  
+>       - speciesOneSecondGene.fa
+>       - speciesTwoSecondGene.fa
+
+All file path variables are located in the main method. The change the root directory, edit the "rootPath" variable. To change input/output directory, edit the "inputPath" and "outPath" respectively.
+
+For dynamic folder and file naming to function properly, blast headers should look as follows:
+
+>Canis_lupus_VPS18_part1_ENSG00000104142.11_ENST00000558474.1
+
+
 
 ### humanGeneSeqGenerator
 

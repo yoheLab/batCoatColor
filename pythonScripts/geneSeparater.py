@@ -1,7 +1,5 @@
 import os
 
-print("Hello World!")
-
 # Generates a file name made up of species, gene name, and gene ID
 def generateName(fileName, geneName, geneID, transID, partID):
     return fileName[0:fileName.find(".") + 1] + geneName + "_" + partID + "_" + geneID + "_" + transID + ".fa"
@@ -18,38 +16,7 @@ def fileFilter(fileList, fileType):
             fileList.remove(f)
     return fileList
 
-# Iterates through a list of file names, going through fasta files and isolating/organising gene sequences
-def geneIsolationOld(fileList):
-    
-    # Loop goes through species files
-    for fileName in fileList:
-        with open(inputPath + fileName, "r") as fileContent:
-            
-            # Goes through species file line by line
-            for line in fileContent:
-                
-                # If the line is a header
-                if line[0] == ">":
-                    
-                    # Isolate gene name and ID
-                    geneName = line[line.find(".") + 1:line.find("|") - 3]
-                    geneID = line[line.find("|") +1:len(line)].strip()
-                    
-                    # Set up directory and file name
-                    dirCheck(geneName)
-                    outputName = generateName(fileName, geneName, geneID)
-                    # Open output file and write header
-                    outputFile = open(outPath + "\\" + geneName + "\\" + outputName, "w")
-                    outputFile.write(line)
-                
-                # If the line is a sequence
-                elif line != "\n":
-                    
-                    # Write the sequence and close the file
-                    outputFile.write(line)
-                    outputFile.close()
-                    count += 1
-
+# Goes through fasta files and splits them apart into individual files
 def geneIsolation(fileList):
     
     # Loop goes through species files
