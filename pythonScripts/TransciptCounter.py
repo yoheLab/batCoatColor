@@ -74,11 +74,11 @@ def csvOrderedCreator(inputDict, orderFile):
                     tempStringUpper += (str(value) + ",")
                     tempStringLower += "0,"
     
-    # Remove commas on theend of strings
+    # Remove commas on the end of strings
     tempStringUpper = tempStringUpper[:-1]
     tempStringLower = tempStringLower[:-1]
     
-    # Build and return the final stirng data for the file
+    # Build and return the final string data for the file
     finalString = (tempStringUpper + "\n" + tempStringLower)
     return finalString
 
@@ -90,16 +90,11 @@ def writeToFile(outputString, fileName):
     outputFile = outputFile.write(outputString)
     outputFile.close()
 
-
-
 file = "wholeGene167.txt"
 countedGenes = geneList(file)
-#print("1. \n" + countedGenes)
 
 # fileContent = csvCreator(countedGenes)
-# print("2. \n" + fileContent)
 
 correctFile = csvOrderedCreator(countedGenes, "excelOrder.txt")
-print("3. \n" + correctFile)
 
 writeToFile(correctFile, "167Genes.csv")

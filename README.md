@@ -11,10 +11,10 @@ Some of these are more useful than others. Their use case as they are is pretty 
 This script goes through a set of fasta files and reformats the header of each fasta query present in a file. For the purposes of this project, each fasta file represented a species, containing about 1000 gene sequences/headers. This script will specifically convert headers in the following manner:
 
 Original header:
->>ID=>Antrozous_pallidus.ENSG00000100596.8_ENST00000556607.1_SPTLC2.match_part1;Target=>Antrozous_pallidus.ENSG00000100596.8_ENST00000556607.1_SPTLC2(-)
+>ID=>Antrozous_pallidus.ENSG00000100596.8_ENST00000556607.1_SPTLC2.match_part1;Target=>Antrozous_pallidus.ENSG00000100596.8_ENST00000556607.1_SPTLC2(-)
 
 New header:
->>Antrozous_pallidus_SPTLC2_part1_ENSG00000100596.8_ENST00000556607.1
+>Antrozous_pallidus_SPTLC2_part1_ENSG00000100596.8_ENST00000556607.1
 
 New headers in include the following inforation from left to right:
 - Species name
@@ -33,7 +33,7 @@ This script is designed for windows, but can be tweaked for unix systems (change
 
 ### dedupeLoop
 
-This script was created with the purpose of comparing two fasta files together using the dedupe shell script. For this project, some genes had multiple "match_part" fasta queries/files (Queries would be labeled as "match_part1", "match_part2", "match_part3" etc.). These sequences look identical when viewed within a gene alignment program, so to determine if all match_part sequences were identical to their same gene counterpart, dedupe would be run on each match_part group and duplicated would be removed to thin the dataset. 
+This script was created with the purpose of comparing two fasta files together using the dedupe shell script. For this project, some genes had multiple "match_part" fasta queries/files (Queries would be labeled as "match_part1", "match_part2", "match_part3" etc.). These sequences look identical when viewed within a gene alignment program, so to determine if all match_part sequences were identical to their same gene counterpart, dedupe would be run on each match_part group and duplicates would be removed to thin the dataset. 
 
 This script worked based on the file structure for the latter chunk of this project, which looks as follows:
 
@@ -55,7 +55,7 @@ The script will also assume each file has only one fasta header and sequence.
 
 There are two sections of commented out code.
 
-- The first (os.rename block) is meant for moving gene files that did not have to be dedupe'd over to the output folder.
+- The first (os.rename block) is meant for moving gene files that did not have to be dedupe'd over to the output folder. To use this, first uncomment the code. Then, go to the second for loop of the main method and edit the if statement (line 79) switch the "if len(speciesSortedFolderFiles[x]) **>** 1:" to "if len(speciesSortedFolderFiles[x]) **==** 1:". Lastly, comment out the "result = " statement in the dedupe method (line 33).
 - The second is for if one would like to see the shell output of running the dedupe.sh script.
 
 This script was designed for unix systems, though it can function on windows using WSL.
@@ -88,7 +88,7 @@ This script takes a fasta file containing multiple queries and converts them int
 
 For this script to function, it relies on two key aspects of the data. First, for the fasta file being distributed into the data, each header follows the ensembl format for nucleotide sequences of proteins including gene ID + version, transcript ID + version, and gene symbol. An example of a header from the fasta file may be viewed below.
 
->>ENSG00000124795.17|ENST00000244776.11|DEK
+>ENSG00000124795.17|ENST00000244776.11|DEK
 
 Secondly, this script relies on the usage of this projects file system. This entails a base folder filled with folders whose names contain the gene symbol and transcript ID. See an example below.
 
@@ -98,7 +98,7 @@ The script will add a query from the fasta file being broken up if it finds a fo
 
 >noName_ENSG00000261832.6_ENST00000638036.1
 
-Lastly, this is what the final file scheme should look like follow the usage of this script:
+Lastly, this is what the final file scheme should look like following the usage of this script:
 
 >- BaseFolder
 >   - FirstGeneFolder
@@ -118,8 +118,27 @@ This script is designed for windows, but can be tweaked for unix systems (change
 
 ### longestSeqGenerator
 
+This script served a fairly specific purpose within this project. It goes through a list of folders containing multiple fasta sequences and calculates the average sequence length of each folder. The average sequence length of each folder is then compared to folders with sequences of the same gene, the the folder with the longest gene sequence is moved to an output directory.
+
+Folders are compared based on whatever the first word of their name is (gene name is this case). The first word should be followed by an underscore with more information. Below is an example of a folder name from this project:
+
+>ACTR2_ENST00000260641.10
+
+So, following the example name, the script will determine the average sequence length for each folder beginning with "ACTR2".
+
+Note that **this script assumes each fasta file only has one sequence**. The average is calculated by dividing the total length of all sequences in a folder combined by the total number of files in the folder.
+
+To use this script, edit the "rootPath", "inPath", and "outPath" variables in the main method. The rootPath should be set to the most recent common folder between the desired input and output directories. Then, the desired input and output path should be specified at inPath and outPath respectively. Each of these will use the "rootPath" variable, so only include pathing not included in the rootPath.
+
+This script is designed for windows, but can be tweaked for unix systems (change instances of "\\\\" to "/").
+
 ### transcriptCounter
 
+This is an older script meant for counting the number of transcripts in a fasta file for each gene. The final counts of genes and transcripts can be output to a csv file for spreadsheet representation. The CSV output can either be written in a non-ordered or ordered manner (based on a desired order CSV input). The script will run assuming that fasta headers are separated by pipes (|) and that the gene name is the last piece of information in the header. See an example below:
+
+>ENSG00000105698.16|ENST00000222305.8|USF2
+
+To use this script, the desired methods must be called from the main method. Edit the "file" variable with the input path of the desired fasta file. From there the csvCreator or csvOrderedCreator may be called on the read in fasta file dictionary (countedGenes variable). Lastly, writeToFile may be called to output the data in csv format. Be sure to specify the output directory there.
 
 ## BASH Scripts
 

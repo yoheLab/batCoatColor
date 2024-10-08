@@ -1,5 +1,3 @@
-print("Hello World!")
-
 import os
 
 # Moves folder based on specified name. Uses predefined input/output paths 
@@ -9,7 +7,7 @@ def moveFolders(folderName):
     os.rename(originalName, newName)
 
 # Categorizes folders by gene name in a dictionary. This is useful for comparing transcripts
-# Returns the dictionary it creates
+# Returns the dictionary it creates. This is based on the first word of any folder name
 def categorizeFolders(folderList):
     tempDict = {}
     for folder in folderList:
@@ -25,10 +23,14 @@ def categorizeFolders(folderList):
 # Returns the name of the folder with the longest gene sequences
 def findLongest(folderList):
     lengthsDict = {}
+    
+    # Checks each folder of a similar name
     for folder in folderList:
         filePath = inPath + "\\" + folder
         fileList = os.listdir(filePath)
         lengthsDict.update({folder:0})
+        
+        # Checks each file within a given folder
         for file in fileList:    
             seq = ""
             with open(filePath + "\\" + file) as fileData:
@@ -38,11 +40,13 @@ def findLongest(folderList):
                     else:
                         seq += str(line)
             lengthsDict[folder] += len(seq)
+        
+        # Average calc
         lengthsDict[folder] = lengthsDict[folder] / len(fileList)
     
+    # Determining the longest length from previous calculation
     theOne = ""
     bigLength = 0
-
     for entry in lengthsDict:
         if lengthsDict[entry] > bigLength:
             theOne = entry
@@ -60,11 +64,11 @@ folders = os.listdir(inPath)
 folderDict = categorizeFolders(folders)
 
 # Determines the folder with the longest gene sequences and adds them to a list
+# If there is only one variant of the gene folder, the entry will also be added to the list
 longestList = []
 for gene in folderDict.keys():
     if len(folderDict[gene]) == 1:
         longestList.append(str(folderDict[gene])[2:len(str(folderDict[gene])) - 2])
-        print(folderDict[gene])
     else:
         longestList.append(findLongest(folderDict[gene]))
 

@@ -30,7 +30,7 @@ def dedupe(tempFileList, outFolder):
     
     # os.rename(f, outputPath) use for non-deduped entries
 
-    result = subprocess.Popen(["bash",dedupePath,"in=" + formattedFiles[0:len(formattedFiles)-1], "out=" + outputPath])
+    result = subprocess.Popen(["bash",dedupePath,"in=" + formattedFiles[0:len(formattedFiles)-1], "out=" + outputPath]) # Comment out for moving non-dedupe genes
     
     #out, err = result.communicate()
     #if result.returncode == 0:
@@ -76,6 +76,6 @@ for folder in folderList:
 
     # If there are multiple match_part entries, checks to see if they're identical
     for x in speciesSortedFolderFiles.keys():
-        if len(speciesSortedFolderFiles[x]) > 1:
+        if len(speciesSortedFolderFiles[x]) > 1: # Change to == 1 for moving non-dedupe genes. Keep at > 1 for dedupe genes 
             dedupe(speciesSortedFolderFiles[x], folder)
 
