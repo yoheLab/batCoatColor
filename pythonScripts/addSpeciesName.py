@@ -19,7 +19,7 @@ def addSpecies(filePath):
                 outputFile.write(line)
 
 
-# Specify input directory path ############################################################## Change this when ready to do the whole dataset
+# Specify input directory path
 filePath = "C:\\Users\\Jacob\\Desktop\\Wormhole\\Yohe_Lab\\BlastE50\\NewBedtoolsOut\\"
 
 # Get all files in the input directory
