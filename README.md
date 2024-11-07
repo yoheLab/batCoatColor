@@ -226,6 +226,8 @@ This script is designed for windows, but can be tweaked for unix systems (change
 
 ### seqUnavailRemover
 
+
+
 ### transcriptCounter
 
 This is an older script meant for counting the number of transcripts in a fasta file for each gene. The final counts of genes and transcripts can be output to a csv file for spreadsheet representation. The CSV output can either be written in a non-ordered or ordered manner (based on a desired order CSV input). The script will run assuming that fasta headers are separated by pipes (|) and that the gene name is the last piece of information in the header. See an example below:
@@ -236,4 +238,53 @@ To use this script, the desired methods must be called from the main method. Edi
 
 ## BASH Scripts
 
-These scripts are either for file manipulation or program execution.
+These scripts are either for file manipulation or program execution on the HPC.
+
+### batListNew
+
+Functionality very similar to batSortUnusedGenomes. See that section for more information.
+
+### batSort
+
+Functionality very similar to batSortUnusedGenomes. See that section for more information.
+
+### batSortUnusedGenomes
+
+This script was used to move undesired genomes from one directory to another. It does so using a for loop on a list of file names. These file names correspond to the genomes that should be moved to a different directory. The script then checks to see if that file exists in the directory specified and moves it if it does. 
+
+If one wishes to use this script, they should create a list of filenames that they wish to move. The filename of that list should be specific in the cat command right before the while loop. Entries from the file will be read into the loop under the variable named $p
+
+The if statement is used to check if a given file exists. One should edit the file path to correspond to the desired directory while keeping $p at the end. The -f flag is what checks if the file exists. 
+
+In the then mv command, one should ensure that the first file path is identical to the one specified in the if statement. The second file path should correspond to the desired output directory.
+
+### blastGenes100
+
+### blastResultsProcessing
+
+### concatenateResults
+
+This script was used to concatenate multiple files (blast results in particular) across multiple folders into one file. This project initially broke it's blast run's into multiple runs (10 blast queries of ~100 genes each), so this script was used to combine results.
+
+The script gets a file name (corresponding to one species) from one folder, then concatenates all files corresponding to that species together and outputs it to a different folder. 
+
+To use this script, alter the file path in the for loop to correspond to one of the folders. If concatenating fasta files, keep the *.fa at the end of the file path. 
+
+The fileName variable isolates specific file names from a whole file path. Change the text in between "blastResult#* and "/*" to correspond to the folder name that files are located in. The cat command should be changed to include each file path that is desired. One may add/remove as many file paths as desired. Ensure to include $fileName at the end of each file path, as that corresponds directly to file names.
+
+The output location is specified after the >>. It is recommended that the filepath include $fileName at the end to avoid conflict in file creation. Outside of that, any directory may be specified. 
+
+### dataBaseGenerator
+
+This script is for creating multiple database files from a folder of genome assemblies (or .fna files)
+
+Database files are used by blast, serving as the subject sequence to search for queries on. 
+
+To use this script, first change the file path in the for loop to where ever the desired genomes assemblies are located. Keep the *fna* in the file path, as that is what filters out non-genome assembly files. Genome assembly files for this project followed the following example name:
+
+> Aeorestes_cinereus_GCA_011751065.1_genomic.fna.gz
+
+The strippedName variable may also need to be altered. It isolated the file name from the file path. To use this variable, alter the text following "FILE#*". This should correspond to the folder name that the genome files are located in.
+
+In the makeblastdb command, the loop variable ($FILE) is used to select an input file. The output location corresponds to a folder or subfolders containing database info on a per species basis. ${"strippedName%GCA*} corresponds to the species name.
+
