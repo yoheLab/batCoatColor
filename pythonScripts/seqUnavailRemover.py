@@ -1,7 +1,3 @@
-
-print("Hello World!")
-
-
 def fastaReader(fileName, countMissing=False):
     
     # Variables
@@ -25,13 +21,13 @@ def fastaReader(fileName, countMissing=False):
                 seq = ""
             
             # Rows following the header are part of the sequence, they are added to the header key
-            # Missing corresponds to any gene that had atleast one invalid entry
+            # Missing corresponds to any gene that had at least one invalid entry
             elif row == "Sequence unavailable" or row == "":
                 missing.append(header)
             elif row[(len(row)-1)] != "*":
                 seq += row 
 
-            # Adds the sequence into the main dictiinary based on the header   
+            # Adds the sequence into the main dictionary based on the header   
             else:
                 seq += row
                 newList = tempDict[header]
@@ -47,8 +43,6 @@ def fastaReader(fileName, countMissing=False):
 
 def fastaWriterTrack(inputDict, outputFileName):
     
-    benjamin = 0
-    
     # Name of output file
     outputFile = open(outputFileName, "w")
 
@@ -56,20 +50,16 @@ def fastaWriterTrack(inputDict, outputFileName):
     for key in inputDict.keys():
         if inputDict[key] != []:
 
-            # Transcript number tracks the number of transcrits each gene has (header in dict)
+            # Transcript number tracks the number of transcripts each gene has (header in dict)
             transcriptNumber = 0
 
             # Loops through lists under each header
             for value in inputDict[key]:
                 
                 # If applicable, marks fasta entries at a designated frequency (every 100th entry, every 150th entry, etc)
-                if benjamin % 100 == 0:
-                    outputFile.write(key + "|" + str(transcriptNumber) + "|" + str(benjamin) + "\n" + value + "\n\n")
-                else:
-                    outputFile.write(key + "|"+ str(transcriptNumber) + "\n" + value + "\n\n")
+                outputFile.write(key + "|"+ str(transcriptNumber) + "\n" + value + "\n\n")
                 
                 # Adds 1 to tracking variables
-                benjamin += 1
                 transcriptNumber += 1
         
         # This will point out any sequences that do not end in a stop codon
@@ -139,7 +129,7 @@ def checkMissing(inputDict, geneListInput):
             
             # If a gene is not listed, this prints
             if id not in transcriptList:
-                print("Ruh roh - " + id)
+                print("Missing gene - " + id)
 
 def shortestSequenceCalc(inputDict):
     

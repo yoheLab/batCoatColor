@@ -226,7 +226,17 @@ This script is designed for windows, but can be tweaked for unix systems (change
 
 ### seqUnavailRemover
 
+This is another multipurpose script that does a few miscellaneous things in the realm fasta parsing. Using the fastaReader method, one may read in a fasta file as a dictionary. These dictionaries may be input into a few different methods. The fasta reader method also has an option to note the headers that are missing a fasta sequence.
 
+This script has two methods for writing an output fasta file, fastaWriterTrack and fastaWriterStandard. fastaWriterStandard will output a fasta file with the dictionary key as a fasta header. The track variant of this method does the same thing but adding a number to each entry where the gene ID and gene name are the same. This effectively identifies different transcripts of the same gene using a number. Though I would advise not using fastaWriterTrack and just using a transcript ID instead.
+
+transcriptCounterOrdered counts the number of transcripts found for each gene ID based upon the input dictionary. These results are then output as a table. This variant of the method does this in a particular order, specified by the order of the list entered into the th method. 
+
+checkMissing determines if any genes are missing from a fasta dictionary based upon an input file. It will print the gene ID of any gene it cannot find to the console. 
+
+Shortest seq calc will determine which sequence in a dictionary is the  shortest and it will print that result to the console. It will also say how long said sequence is.
+
+the final method is matchTranscript, which has a fairly niche use case. This method was used to correct the headers of a fasta dictionary. The original headers had extra numbers as they were written using fastaWriterTrack. These numbers became problematic later down the pipeline, so they needed to be replaced with transcript IDs. So, this method was written to take two dictionaries, one corresponding to the messed up fasta file, and the other to a new fasta file with proper headers. The sequences are matched based on sequence, and the headers are replaced. One might wonder why the new fasta was not just used. This is because some processing steps and data generation had already been done on the old fasta file, thus it would have been preferred to keep the old file while fixing the headers.
 
 ### transcriptCounter
 
@@ -260,7 +270,37 @@ In the then mv command, one should ensure that the first file path is identical 
 
 ### blastGenes100
 
+This script was used to execute blast. Particularly, this script uses one blast query and blasts each database in a specified directory. 
+
+The header for this script is important. The "#SBATCH --nodes==4" will determine how quickly blast will execute. More nodes will increase speed, but make it more difficult for the job to begin (you will need to wait for nodes to become free). However, if this line is changed, one part of the tblastn query will also need to be changed. The -num_threads flag specifies the number of threads that the blast job will utilize. Given that (at the time of writing) each node consists of 16 CPUs (see https://oneit.charlotte.edu/urc/research-clusters/orion-gpu-slurm-user-notes/), the number following the -num_threads flag should be 16 times the number of nodes specified. In this case, 4 nodes are requested, so 64 threads are specified. If blast cannot find this many threads, it will automatically default to the maximum number it can use with the nodes it is given. It should also be noted that "#SBATCH --ntasks-per-node=16" also denotes the number of CPUs to be used per node.
+
+The for loop will loop through every database it finds in the specified directory. See databaseGenerator for more information on blast database creation. This file path may be changed to suit one's needs.
+
+The strippedName variable is set to isolate the file name from the file path. This is done for dynamic file naming after utilizing the blast command but also for the -db flag in the tblastn command. One should change the the text in between "FILE#*" and "/}" to the name of the folder that the data base folders are located in.
+
+The tblastn command will take a query of fasta files and find regions of similarity in data base files. It has multiple flags that may be used to fine tune this process. the -query flag is for specifying the blast query. the -db flag is for specifying the blast database files. Due to the fact that a blast database consists of multiple files, each organism was given it's own database folder. For this reason, both the organism folder ($FILE) and the organism name ("${strippedName%DB}") must be provided as a file path. num_threads specifies the number of CPUs or threads that the blast job will use. -num_alignments specifies the number of alignments to be shown in the output files. I think this is per query, not corresponding to a file of multiple queries. -outfmt specifies the output format that blast will write it's results to. Most cases I have seen use outfmt 6, and this projects processing script also relies on using said format. One may look up what the columns of this output format correspond to. Finally, the -out flag specifies an output directory. In this case, ${strippedName%_DB} is used for dynamic file naming.
+
 ### blastResultsProcessing
+
+This script is for processing blast results. The goal of this script is to execute the blast2gff python script, the awk command, and the bedtools getfasta command on every tblastn file to convert it into a fasta file. This particular version operates under a file structure that looks as follows:
+
+>- BaseFolder
+>   - FirstGeneQueryFolder
+>       - speciesOne.tblastn
+>       - speciesTwo.tblastn
+>       - speciesThree.tblastn
+>   - SecondGeneQueryFolder  
+>       - speciesOne.tblastn
+>       - speciesTwo.tblastn
+>       - speciesThree.tblastn
+
+The first loop of the script goes through each gene query folder. The second loop goes through each species for said folders. 
+
+An alternative to this loop structure would be to concatenate the results together. Concatenation would likely be more efficient in most instances.
+
+Within the second loop is where the processing commands are located. prior to the processing commands, some variables are set up. fileName isolates an individual filename from a filepath. Change the text in between FILE# and /* to the name of the folder blast result files are located in. species uses this variable to isolate the species name. This variable is only used to create the final variable, being the genome assembly variable. The genome assembly variable update dynamically based upon the file being processed. This is done for the final command (bedtools getfasta).
+
+Following the variable are the processing commands. These were based upon a script shown to me by Dr. Yohe, so I am not entirely sure on the specifics of all of them. If one wishes yo use them, just change the input and output locations for each command. python blast2gff.py uses -b for input and > for output. awk has it's input directory directly before the > and it's output directory directly after. For the bedtools getfasta command, the input directory is specified following -bed and the output directory is specifiedd at the end following -fo. Know that for this command, a genome assembly also needs to be provided after the -fi command. 
 
 ### concatenateResults
 

@@ -16,13 +16,11 @@ do
 
 	# These are for if new directories need to be made
 	mkdir -p Blast2gff/"$genes"
-        mkdir -p AwkOut/"$genes"
-        mkdir -p BedtoolsOut/"$genes"
+    mkdir -p AwkOut/"$genes"
+    mkdir -p BedtoolsOut/"$genes"
 
 	for FILE in "$FILEPATH"/*.tblastn
 		do
-			#echo "$FILE GIMME A HIGHER LOVE \n"
-
 			# Variables
 			fileName="${FILE#*00/*}" # Gets the filename from the path for dynamic naming
 			species="${fileName%.tblastn}" # Isolates the species name from the tblastn file
